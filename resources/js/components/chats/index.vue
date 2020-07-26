@@ -18,9 +18,9 @@
                     <div class="card-header">
                         Chat
                     </div>
-                    
+
                     <div class="card-body users">
-                        <chat-messages :loading="chatLoading" :user="selectedUser" :messages="messages" @new="newMessage" />
+                        <chat-messages :user="selectedUser" :messages="messages" @new="newMessage" />
                     </div>
                 </div>
             </div>
@@ -47,14 +47,14 @@
             return {
                 selectedUser: null,
                 messages: [],
-                users: [],
-                chatLoading: false
+                users: []
             }
         },
         mounted(){
             Echo.private(`chat.${this.user.id}`)
                 .listen('NewMessage', (e) => {
                     this.hanleIncoming(e.message);
+                    this.emailAboutNewMessage(e.message);
                 });
         },
         created(){
@@ -73,7 +73,6 @@
                 this.updateUnreadCount(user, true);
                 axios.get(`/chat/${user.id}`)
                     .then(({data}) => {
-                        this.chatLoading = false;
                         this.messages = data;
                     })
             },
@@ -86,6 +85,12 @@
             },
             newMessage(message){
                 this.messages.push(message);
+            },
+            emailAboutNewMessage(message){
+                axios.post('send/email', message)
+                    .then(({data}) => {
+                        this.messages = data;
+                    })
             },
             updateUnreadCount(user, bool) {
                 this.users = this.users.map((u) => {

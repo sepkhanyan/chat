@@ -100,18 +100,14 @@
     				border-radius: 5px;
    					padding: 5px 10px;
     				display: inline-block;
+    				color: white;
+    				background: #81c4f9;
                 }
                 &.received {
                     text-align: right;
-                    .text {
-                        background: #b2b2b2;
-                    }
                 }
                 &.sent {
                     text-align: left;
-                    .text {
-                        background: #81c4f9;
-                    }
                 }
             }
         }

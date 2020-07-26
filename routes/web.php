@@ -21,4 +21,5 @@ Route::group(['middleware' => ['web', 'auth']], function () {
     Route::get('/users', 'ChatController@getUsersList');
 	Route::get('/chat/{id}', 'ChatController@getChat');
 	Route::post('/send/message', 'ChatController@sendMessage');
+	Route::post('/send/email', 'ChatController@sendEmail');
 });

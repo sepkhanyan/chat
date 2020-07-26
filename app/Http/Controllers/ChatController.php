@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Message;
 use App\Events\NewMessage;
+use App\Jobs\SendEmailJob;
 
 class ChatController extends Controller
 {
@@ -54,5 +55,17 @@ class ChatController extends Controller
         broadcast(new NewMessage($message));
 
         return response()->json($message);
+    }
+
+     public function sendEmail(Request $request)
+    {
+    	$data = [];
+    	$user = User::find($request['to']);
+        $data['email'] = $user['email'];
+        $data['message'] = $request['text'];
+
+        dispatch(new SendEmailJob($data));
+
+        return response()->json(['success' => true]);
     }
 }

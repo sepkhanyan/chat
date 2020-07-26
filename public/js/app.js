@@ -2083,8 +2083,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       selectedUser: null,
       messages: [],
-      users: [],
-      chatLoading: false
+      users: []
     };
   },
   mounted: function mounted() {
@@ -2092,6 +2091,8 @@ __webpack_require__.r(__webpack_exports__);
 
     Echo["private"]("chat.".concat(this.user.id)).listen('NewMessage', function (e) {
       _this.hanleIncoming(e.message);
+
+      _this.emailAboutNewMessage(e.message);
     });
   },
   created: function created() {
@@ -2114,7 +2115,6 @@ __webpack_require__.r(__webpack_exports__);
       this.updateUnreadCount(user, true);
       axios.get("/chat/".concat(user.id)).then(function (_ref2) {
         var data = _ref2.data;
-        _this3.chatLoading = false;
         _this3.messages = data;
       });
     },
@@ -2128,6 +2128,14 @@ __webpack_require__.r(__webpack_exports__);
     },
     newMessage: function newMessage(message) {
       this.messages.push(message);
+    },
+    emailAboutNewMessage: function emailAboutNewMessage(message) {
+      var _this4 = this;
+
+      axios.post('send/email', message).then(function (_ref3) {
+        var data = _ref3.data;
+        _this4.messages = data;
+      });
     },
     updateUnreadCount: function updateUnreadCount(user, bool) {
       this.users = this.users.map(function (u) {
@@ -6586,7 +6594,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "[data-v-f257383a]::-webkit-scrollbar {\n  width: 0px;\n  background: transparent;\n}\n.chat[data-v-f257383a] {\n  max-height: 100%;\n  height: 500px;\n  flex: 5;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.chat h1[data-v-f257383a] {\n  font-size: 20px;\n  margin-bottom: 15px;\n}\n.messagebox[data-v-f257383a] {\n  overflow-y: scroll;\n  scrollbar-width: none;\n  -ms-overflow-style: none;\n  background: #f0f0f0;\n  height: 100%;\n  max-height: 470px;\n  border-radius: 5px;\n}\n.messagebox ul[data-v-f257383a] {\n  list-style-type: none;\n  padding: 10px;\n}\n.messagebox ul li.message[data-v-f257383a] {\n  margin: 10px 0;\n  width: 100%;\n}\n.messagebox ul li.message .text[data-v-f257383a] {\n  max-width: 200px;\n  border-radius: 5px;\n  padding: 5px 10px;\n  display: inline-block;\n}\n.messagebox ul li.message.received[data-v-f257383a] {\n  text-align: right;\n}\n.messagebox ul li.message.received .text[data-v-f257383a] {\n  background: #b2b2b2;\n}\n.messagebox ul li.message.sent[data-v-f257383a] {\n  text-align: left;\n}\n.messagebox ul li.message.sent .text[data-v-f257383a] {\n  background: #81c4f9;\n}\n.textbox textarea[data-v-f257383a] {\n  width: 100%;\n  margin: 10px 0;\n  resize: none;\n  border-radius: 3px;\n  border: 1px solid lightgray;\n  padding: 15px;\n}", ""]);
+exports.push([module.i, "[data-v-f257383a]::-webkit-scrollbar {\n  width: 0px;\n  background: transparent;\n}\n.chat[data-v-f257383a] {\n  max-height: 100%;\n  height: 500px;\n  flex: 5;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.chat h1[data-v-f257383a] {\n  font-size: 20px;\n  margin-bottom: 15px;\n}\n.messagebox[data-v-f257383a] {\n  overflow-y: scroll;\n  scrollbar-width: none;\n  -ms-overflow-style: none;\n  background: #f0f0f0;\n  height: 100%;\n  max-height: 470px;\n  border-radius: 5px;\n}\n.messagebox ul[data-v-f257383a] {\n  list-style-type: none;\n  padding: 10px;\n}\n.messagebox ul li.message[data-v-f257383a] {\n  margin: 10px 0;\n  width: 100%;\n}\n.messagebox ul li.message .text[data-v-f257383a] {\n  max-width: 200px;\n  border-radius: 5px;\n  padding: 5px 10px;\n  display: inline-block;\n  color: white;\n  background: #81c4f9;\n}\n.messagebox ul li.message.received[data-v-f257383a] {\n  text-align: right;\n}\n.messagebox ul li.message.sent[data-v-f257383a] {\n  text-align: left;\n}\n.textbox textarea[data-v-f257383a] {\n  width: 100%;\n  margin: 10px 0;\n  resize: none;\n  border-radius: 3px;\n  border: 1px solid lightgray;\n  padding: 15px;\n}", ""]);
 
 // exports
 
@@ -44623,11 +44631,7 @@ var render = function() {
             { staticClass: "card-body users" },
             [
               _c("chat-messages", {
-                attrs: {
-                  loading: _vm.chatLoading,
-                  user: _vm.selectedUser,
-                  messages: _vm.messages
-                },
+                attrs: { user: _vm.selectedUser, messages: _vm.messages },
                 on: { new: _vm.newMessage }
               })
             ],
